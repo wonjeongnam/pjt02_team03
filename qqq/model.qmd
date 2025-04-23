@@ -40,7 +40,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.pipeline import Pipeline
 import plotly.graph_objects as go
 
-df = pd.read_csv("../data/our_df.csv")
+df = pd.read_csv("../data/our_df2.csv")
 
 X = df[['BedroomAbvGr', 'TotalFullBath', 'GarageCars', 'GarageArea', '2ndFlrSF', '1stFlrSF', 'dist_to_ISU']]
 y = df['OverallCond']  # 집 상태 점수

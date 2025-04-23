@@ -8,7 +8,7 @@ format:
     code-fold: true
 ---
 
-## 🗺️ 상원이의 집, 위치부터 따져보자
+## 🗺️ 우리 집, 위치부터 따져보자
 
 조건을 만족하는 집은 많지만, **위치**는 우리에게 정말 중요해요.  
 아래 세 가지 기준을 중심으로 지도 시각화를 진행했습니다.
@@ -25,7 +25,7 @@ import pandas as pd
 import folium
 from folium.plugins import MarkerCluster
 
-df = pd.read_csv("../data/our_df.csv")
+df = pd.read_csv("../data/our_df2.csv")
 isu_lat, isu_lon = 42.0267, -93.6465
 
 m = folium.Map(location=[isu_lat, isu_lon], zoom_start=14, tiles='CartoDB positron')
@@ -43,80 +43,40 @@ m
 ```
 
 
-🏞️ 2. 공원 분포 (외부데이터 활용)
-보경이는 러닝을 좋아해요! 🏃‍♀️
-따라서 근처에 공원이 있는지 확인도 필수예요.
-OSM(OpenStreetMap)에서 leisure=park 데이터를 활용해 Ames 내 공원 분포를 표시했습니다.
 
-```{python}
-import osmnx as ox
-
-leisure_facility_tags = {
-    'park': {'leisure': 'park'},
-    'garden': {'leisure': 'garden'},
-    # 'playground': {'leisure': 'playground'},
-    # 'dog_park': {'leisure': 'dog_park'},
-    'sports_centre': {'leisure': 'sports_centre'},
-    'pitch': {'leisure': 'pitch'},
-    'track': {'leisure': 'track'},
-    # 'swimming_pool': {'leisure': 'swimming_pool'},
-    'stadium': {'leisure': 'stadium'},
-}
-
-# 👉 leisure 값만 뽑아서 리스트로 만든 후 하나로 합쳐줌
-leisure_tags = {'leisure': [tag['leisure'] for tag in leisure_facility_tags.values()]}
-
-# OSM 데이터 가져오기
-parks = ox.features_from_place("Ames, Iowa, USA", tags=leisure_tags)
-print(len(parks))
-
-park_map = folium.Map(location=[isu_lat, isu_lon], zoom_start=13, tiles='CartoDB positron')
-for _, row in parks.iterrows():
-    if 'geometry' in row and row.geometry.geom_type == 'Point':
-        folium.CircleMarker(
-            location=[row.geometry.y, row.geometry.x],
-            radius=6,
-            color='green',
-            fill=True,
-            fill_color='green',
-            fill_opacity=0.6,
-            popup=row.get("name", "Unnamed Park")
-        ).add_to(park_map)
-
-park_map
-```
-
-
-🌈 3. 조건 만족도에 따라 색상 구분
+🌈 2. 조건 만족도에 따라 색상 구분
 우리 팀은 조건을 수치화해서 각 집마다 만족도 점수를 계산했어요.
 아래 지도는 각 집의 조건 만족도 점수(score)에 따라 색상이 달라지는 시각화예요.
 
-1.0에 가까울수록 조건을 완벽히 충족
-
-0.0에 가까울수록 조건을 거의 만족하지 못함
 
 ```{python}
 
 import numpy as np
 
-# 예시로 점수 생성 (실제는 사전 계산된 score 컬럼 사용)
 df["score"] = (
-    0.2 * (df["BedroomAbvGr"] >= 3).astype(int) +
-    0.2 * (df["TotalFullBath"] >= 2).astype(int) +
-    0.2 * (df["GarageCars"] > 0).astype(int) +
-    0.2 * (df["HouseStyle"] == 2).astype(int) +
-    0.2 * (df["dist_to_ISU"] <= 2000).astype(int)
+    (df["dist_to_ISU"] <= 2000).astype(int) +
+    (df["TotalFullBath"] >= 2).astype(int) +
+    (df["BedroomAbvGr"] >= 2).astype(int) +
+    (df["HouseStyle"] == 2).astype(int) +
+    (df["1stFlrSF"] >= 1200).astype(int) +
+    (df["2ndFlrSF"] != 0).astype(int) +
+    (df["CentralAir"] == 'Y').astype(int) +
+    (df["HeatingQC"].isin(['TA', 'Gd', 'Ex'])).astype(int) +
+    (df["KitchenAbvGr"] >= 1).astype(int) +
+    (df["KitchenQual"].isin(['TA', 'Gd', 'Ex'])).astype(int) +
+    (df["GarageCars"] >= 1).astype(int) +
+    (df["OverallCond"] >= 5).astype(int) + 
+    (df['Street'] == 'Pave').astype(int) + 
+    (df['SalePrice'] <= 280000).astype(int)
 )
 
 def get_color(score):
-    if score >= 0.8:
+    if score >= 14:
         return "darkgreen"
-    elif score >= 0.6:
-        return "lightgreen"
-    elif score >= 0.4:
+    elif score >= 13:
         return "orange"
     else:
-        return "red"
+        return 'none'
 
 score_map = folium.Map(location=[isu_lat, isu_lon], zoom_start=13, tiles='CartoDB positron')
 
