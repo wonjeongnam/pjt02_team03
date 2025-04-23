@@ -1,0 +1,25 @@
+project:
+  type: website
+
+website:
+  title: "상원이의 집을 찾아서"
+  navbar:
+    left:
+      - file: index.qmd
+        text: "1. 소개 & EDA"
+      - file: map.qmd
+        text: "2. 지도 시각화"
+      - file: filter.qmd
+        text: "3. 조건 필터링"
+      - file: model.qmd
+        text: "4. 회귀 분석"
+      - file: final.qmd
+        text: "5. 최종 추천"
+
+format:
+  html:
+    theme: cosmo
+    toc: true
+    toc-depth: 2
+    code-fold: true
+    code-tools: true

@@ -1,0 +1,66 @@
+---
+title: "Lasso 회귀 분석"
+format:
+  html:
+    theme: cosmo
+    toc: true
+    toc-depth: 2
+    code-fold: true
+---
+
+## 📈 우리가 중요하게 여긴 조건은 실제로도 중요할까?
+
+"좋은 집을 고르는 기준"이 집의 실제 품질과도 연관이 있을까요?
+
+우리는 이 질문에 답하기 위해 **Lasso 회귀 분석**을 진행했습니다.  
+불필요한 변수는 제외하고, 중요한 변수만 남겨주는 똑똑한 모델이에요! 🧠
+
+---
+
+## 🔎 사용한 변수
+
+| 변수명         | 설명                             |
+|----------------|----------------------------------|
+| BedroomAbvGr   | 지상 방 개수                    |
+| TotalFullBath  | 욕실 수                          |
+| GarageCars     | 차고 수                          |
+| GarageArea     | 차고 면적                        |
+| 2ndFlrSF       | 2층 면적                         |
+| 1stFlrSF       | 1층 면적                         |
+| dist_to_ISU    | 학교와의 거리 (미터)             |
+
+---
+
+## ⚙️ Lasso 모델 학습
+
+```{python}
+import pandas as pd
+from sklearn.linear_model import LassoCV
+from sklearn.preprocessing import StandardScaler
+from sklearn.pipeline import Pipeline
+import plotly.graph_objects as go
+
+df = pd.read_csv("../data/our_df.csv")
+
+X = df[['BedroomAbvGr', 'TotalFullBath', 'GarageCars', 'GarageArea', '2ndFlrSF', '1stFlrSF', 'dist_to_ISU']]
+y = df['OverallCond']  # 집 상태 점수
+
+pipeline = Pipeline([
+    ("scaler", StandardScaler()),
+    ("lasso", LassoCV(cv=5, random_state=0))
+])
+pipeline.fit(X, y)
+
+coef = pipeline.named_steps['lasso'].coef_
+feature_importance = pd.Series(coef, index=X.columns).sort_values()
+
+fig = go.Figure([go.Bar(x=feature_importance.values, y=feature_importance.index, orientation='h')])
+fig.update_layout(title="📊 Lasso 회귀 변수 중요도", xaxis_title="계수 (중요도)", yaxis_title="변수")
+fig.show()
+```
+
+
+✅ 결과 해석
+계수가 0에 가까운 변수는 덜 중요한 것으로 판단돼요.
+
+절댓값이 클수록 집 상태를 잘 설명하는 변수라는 뜻입니다.
