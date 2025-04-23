@@ -1,0 +1,136 @@
+---
+title: "지도 기반 시각화"
+format:
+  html:
+    theme: cosmo
+    toc: true
+    toc-depth: 2
+    code-fold: true
+---
+
+## 🗺️ 상원이의 집, 위치부터 따져보자
+
+조건을 만족하는 집은 많지만, **위치**는 우리에게 정말 중요해요.  
+아래 세 가지 기준을 중심으로 지도 시각화를 진행했습니다.
+
+---
+
+## 🎓 1. 아이오와 주립대학교(학교) 반경 2km 이내 집 분포
+
+학교에서 멀어질수록 등하교가 불편하고 교통비도 증가해요.  
+우선 **학교에서 반경 2km 이내에 있는 집들만 시각화**해봤습니다.
+
+```{python}
+import pandas as pd
+import folium
+from folium.plugins import MarkerCluster
+
+df = pd.read_csv("../data/our_df.csv")
+isu_lat, isu_lon = 42.0267, -93.6465
+
+m = folium.Map(location=[isu_lat, isu_lon], zoom_start=14, tiles='CartoDB positron')
+folium.Circle([isu_lat, isu_lon], radius=2000, color='blue', fill=True, fill_opacity=0.1, popup='ISU 2km').add_to(m)
+folium.Marker([isu_lat, isu_lon], tooltip="Iowa State University", icon=folium.Icon(color="blue")).add_to(m)
+
+cluster = MarkerCluster().add_to(m)
+for _, row in df.iterrows():
+    if row['dist_to_ISU'] <= 2000:
+        popup = f"{row['HouseStyle']}층 / 🛏 {row['BedroomAbvGr']} / 🛁 {row['TotalFullBath']}"
+        folium.Marker([row['Latitude'], row['Longitude']],
+                      popup=popup,
+                      icon=folium.Icon(color='green')).add_to(cluster)
+m
+```
+
+
+🏞️ 2. 공원 분포 (외부데이터 활용)
+보경이는 러닝을 좋아해요! 🏃‍♀️
+따라서 근처에 공원이 있는지 확인도 필수예요.
+OSM(OpenStreetMap)에서 leisure=park 데이터를 활용해 Ames 내 공원 분포를 표시했습니다.
+
+```{python}
+import osmnx as ox
+
+leisure_facility_tags = {
+    'park': {'leisure': 'park'},
+    'garden': {'leisure': 'garden'},
+    # 'playground': {'leisure': 'playground'},
+    # 'dog_park': {'leisure': 'dog_park'},
+    'sports_centre': {'leisure': 'sports_centre'},
+    'pitch': {'leisure': 'pitch'},
+    'track': {'leisure': 'track'},
+    # 'swimming_pool': {'leisure': 'swimming_pool'},
+    'stadium': {'leisure': 'stadium'},
+}
+
+# 👉 leisure 값만 뽑아서 리스트로 만든 후 하나로 합쳐줌
+leisure_tags = {'leisure': [tag['leisure'] for tag in leisure_facility_tags.values()]}
+
+# OSM 데이터 가져오기
+parks = ox.features_from_place("Ames, Iowa, USA", tags=leisure_tags)
+print(len(parks))
+
+park_map = folium.Map(location=[isu_lat, isu_lon], zoom_start=13, tiles='CartoDB positron')
+for _, row in parks.iterrows():
+    if 'geometry' in row and row.geometry.geom_type == 'Point':
+        folium.CircleMarker(
+            location=[row.geometry.y, row.geometry.x],
+            radius=6,
+            color='green',
+            fill=True,
+            fill_color='green',
+            fill_opacity=0.6,
+            popup=row.get("name", "Unnamed Park")
+        ).add_to(park_map)
+
+park_map
+```
+
+
+🌈 3. 조건 만족도에 따라 색상 구분
+우리 팀은 조건을 수치화해서 각 집마다 만족도 점수를 계산했어요.
+아래 지도는 각 집의 조건 만족도 점수(score)에 따라 색상이 달라지는 시각화예요.
+
+1.0에 가까울수록 조건을 완벽히 충족
+
+0.0에 가까울수록 조건을 거의 만족하지 못함
+
+```{python}
+
+import numpy as np
+
+# 예시로 점수 생성 (실제는 사전 계산된 score 컬럼 사용)
+df["score"] = (
+    0.2 * (df["BedroomAbvGr"] >= 3).astype(int) +
+    0.2 * (df["TotalFullBath"] >= 2).astype(int) +
+    0.2 * (df["GarageCars"] > 0).astype(int) +
+    0.2 * (df["HouseStyle"] == 2).astype(int) +
+    0.2 * (df["dist_to_ISU"] <= 2000).astype(int)
+)
+
+def get_color(score):
+    if score >= 0.8:
+        return "darkgreen"
+    elif score >= 0.6:
+        return "lightgreen"
+    elif score >= 0.4:
+        return "orange"
+    else:
+        return "red"
+
+score_map = folium.Map(location=[isu_lat, isu_lon], zoom_start=13, tiles='CartoDB positron')
+
+for _, row in df.iterrows():
+    color = get_color(row['score'])
+    folium.CircleMarker(
+        location=[row['Latitude'], row['Longitude']],
+        radius=5,
+        color=color,
+        fill=True,
+        fill_color=color,
+        fill_opacity=0.7,
+        popup=f"Score: {row['score']:.1f}"
+    ).add_to(score_map)
+
+score_map
+```

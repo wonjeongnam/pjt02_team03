@@ -1,0 +1,121 @@
+[
+  {
+    "objectID": "model.html",
+    "href": "model.html",
+    "title": "Lasso 회귀 분석",
+    "section": "",
+    "text": "“좋은 집을 고르는 기준”이 집의 실제 품질과도 연관이 있을까요?\n우리는 이 질문에 답하기 위해 Lasso 회귀 분석을 진행했습니다.\n불필요한 변수는 제외하고, 중요한 변수만 남겨주는 똑똑한 모델이에요! 🧠"
+  },
+  {
+    "objectID": "model.html#우리가-중요하게-여긴-조건은-실제로도-중요할까",
+    "href": "model.html#우리가-중요하게-여긴-조건은-실제로도-중요할까",
+    "title": "Lasso 회귀 분석",
+    "section": "",
+    "text": "“좋은 집을 고르는 기준”이 집의 실제 품질과도 연관이 있을까요?\n우리는 이 질문에 답하기 위해 Lasso 회귀 분석을 진행했습니다.\n불필요한 변수는 제외하고, 중요한 변수만 남겨주는 똑똑한 모델이에요! 🧠"
+  },
+  {
+    "objectID": "model.html#사용한-변수",
+    "href": "model.html#사용한-변수",
+    "title": "Lasso 회귀 분석",
+    "section": "🔎 사용한 변수",
+    "text": "🔎 사용한 변수\n\n\n\n변수명\n설명\n\n\n\n\nBedroomAbvGr\n지상 방 개수\n\n\nTotalFullBath\n욕실 수\n\n\nGarageCars\n차고 수\n\n\nGarageArea\n차고 면적\n\n\n2ndFlrSF\n2층 면적\n\n\n1stFlrSF\n1층 면적\n\n\ndist_to_ISU\n학교와의 거리 (미터)"
+  },
+  {
+    "objectID": "model.html#lasso-모델-학습",
+    "href": "model.html#lasso-모델-학습",
+    "title": "Lasso 회귀 분석",
+    "section": "⚙️ Lasso 모델 학습",
+    "text": "⚙️ Lasso 모델 학습\n\n\nCode\nimport pandas as pd\nfrom sklearn.linear_model import LassoCV\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import Pipeline\nimport plotly.graph_objects as go\n\ndf = pd.read_csv(\"../data/our_df.csv\")\n\nX = df[['BedroomAbvGr', 'TotalFullBath', 'GarageCars', 'GarageArea', '2ndFlrSF', '1stFlrSF', 'dist_to_ISU']]\ny = df['OverallCond']  # 집 상태 점수\n\npipeline = Pipeline([\n    (\"scaler\", StandardScaler()),\n    (\"lasso\", LassoCV(cv=5, random_state=0))\n])\npipeline.fit(X, y)\n\ncoef = pipeline.named_steps['lasso'].coef_\nfeature_importance = pd.Series(coef, index=X.columns).sort_values()\n\nfig = go.Figure([go.Bar(x=feature_importance.values, y=feature_importance.index, orientation='h')])\nfig.update_layout(title=\"📊 Lasso 회귀 변수 중요도\", xaxis_title=\"계수 (중요도)\", yaxis_title=\"변수\")\nfig.show()\n\n\n                                                \n\n\n✅ 결과 해석 계수가 0에 가까운 변수는 덜 중요한 것으로 판단돼요.\n절댓값이 클수록 집 상태를 잘 설명하는 변수라는 뜻입니다."
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "상원이의 집을 찾아서",
+    "section": "",
+    "text": "4명의 아이오와 유학생이 조건에 맞는 상원이의 집을 찾기 위해 데이터를 분석했습니다.\n\n\n\n🎓 학교 근처여야 함\n\n💰 월세는 저렴할수록 좋음\n\n🛏️ 방/욕실 수는 넉넉해야 함\n\n🔥 난방/에어컨, 전기 시스템도 확인\n\n🚗 차고, 🏞️ 공원, 🧱 울타리, 도로 포장 여부도 고려"
+  },
+  {
+    "objectID": "index.html#프로젝트-소개",
+    "href": "index.html#프로젝트-소개",
+    "title": "상원이의 집을 찾아서",
+    "section": "",
+    "text": "4명의 아이오와 유학생이 조건에 맞는 상원이의 집을 찾기 위해 데이터를 분석했습니다.\n\n\n\n🎓 학교 근처여야 함\n\n💰 월세는 저렴할수록 좋음\n\n🛏️ 방/욕실 수는 넉넉해야 함\n\n🔥 난방/에어컨, 전기 시스템도 확인\n\n🚗 차고, 🏞️ 공원, 🧱 울타리, 도로 포장 여부도 고려"
+  },
+  {
+    "objectID": "index.html#주요-변수-분포",
+    "href": "index.html#주요-변수-분포",
+    "title": "상원이의 집을 찾아서",
+    "section": "📊 주요 변수 분포",
+    "text": "📊 주요 변수 분포\n\n\nCode\nimport pandas as pd\nimport plotly.express as px\nour_df = pd.read_csv(\"../data/our_df2.csv\")"
+  },
+  {
+    "objectID": "filter.html",
+    "href": "filter.html",
+    "title": "조건 필터링 대시보드",
+    "section": "",
+    "text": "우리 팀은 모두 유학생이에요. 현실적인 조건을 무시할 수 없죠.\n그래서 다양한 요소를 고려해 필터 슬라이더로 집을 직접 골라볼 수 있도록 만들었습니다."
+  },
+  {
+    "objectID": "filter.html#유학생의-현실-반영-조건을-직접-조정해보자",
+    "href": "filter.html#유학생의-현실-반영-조건을-직접-조정해보자",
+    "title": "조건 필터링 대시보드",
+    "section": "",
+    "text": "우리 팀은 모두 유학생이에요. 현실적인 조건을 무시할 수 없죠.\n그래서 다양한 요소를 고려해 필터 슬라이더로 집을 직접 골라볼 수 있도록 만들었습니다."
+  },
+  {
+    "objectID": "filter.html#사용-방법",
+    "href": "filter.html#사용-방법",
+    "title": "조건 필터링 대시보드",
+    "section": "📌 사용 방법",
+    "text": "📌 사용 방법\n슬라이더를 조정하면 조건에 맞는 집만 표시됩니다.\n가장 적합한 집을 빠르게 찾는 데 큰 도움이 돼요.\n\n\nCode\nimport pandas as pd\n\ndf = pd.read_csv(\"../data/our_df.csv\")\n\n# 기본 필터 조건 설정\ndist_limit = 2000\nmin_bedroom = 3\nmin_bath = 2.0\ngarage_required = True\n\n# 조건 적용\nfiltered = df[\n    (df['dist_to_ISU'] &lt;= dist_limit) &\n    (df['BedroomAbvGr'] &gt;= min_bedroom) &\n    (df['TotalFullBath'] &gt;= min_bath)\n]\n\nif garage_required:\n    filtered = filtered[df['GarageCars'] &gt; 0]\n\nfiltered[['BedroomAbvGr', 'TotalFullBath', 'GarageCars', 'GarageArea', 'dist_to_ISU']].sort_values(by='dist_to_ISU').head(10)\n\n\nC:\\Users\\user\\AppData\\Local\\Temp\\ipykernel_17780\\1529705203.py:19: UserWarning:\n\nBoolean Series key will be reindexed to match DataFrame index.\n\n\n\n\n\n\n\n\n\n\nBedroomAbvGr\nTotalFullBath\nGarageCars\nGarageArea\ndist_to_ISU\n\n\n\n\n1698\n4\n3.0\n3.0\n864.0\n778.820433\n\n\n1257\n4\n2.0\n1.0\n400.0\n822.919739\n\n\n1199\n3\n2.0\n1.0\n312.0\n847.174575\n\n\n64\n4\n2.0\n1.0\n336.0\n847.442688\n\n\n1378\n4\n3.0\n2.0\n621.0\n847.753568\n\n\n1703\n3\n2.0\n1.0\n240.0\n852.581034\n\n\n1638\n3\n2.0\n2.0\n576.0\n853.184899\n\n\n1651\n4\n3.0\n2.0\n576.0\n886.197166\n\n\n889\n4\n2.0\n1.0\n216.0\n890.548803\n\n\n2038\n5\n2.0\n1.0\n440.0\n927.763908\n\n\n\n\n\n\n\n🎯 조건 기준 예시 설명 📍 dist_to_ISU &lt;= 2000: 학교 반경 2km 이내\n🛏️ BedroomAbvGr &gt;= 3: 3인 이상 함께 살 수 있는 방 개수\n🛁 TotalFullBath &gt;= 2: 성별 구분을 위한 최소 욕실 2개\n🚗 GarageCars &gt; 0: 차가 있으므로 차고 필수!\n✅ 필터링 결과 예시 조건을 충족한 집 10개를 예시로 출력합니다.\n방 개수 욕실 수 차고 대수 차고 면적 학교 거리 (m) … … … … … 💡 이 필터 기능을 사용하면 여러 후보 중 가장 조건에 맞는 집을 빠르게 탐색할 수 있어요!"
+  },
+  {
+    "objectID": "final.html",
+    "href": "final.html",
+    "title": "최종 추천 결과",
+    "section": "",
+    "text": "모든 조건을 적용하고, 데이터를 분석하고, 점수까지 매겨본 결과\n가장 적합한 단 하나의 집을 최종적으로 선정했습니다. 🎉"
+  },
+  {
+    "objectID": "final.html#드디어-상원이의-집을-추천합니다",
+    "href": "final.html#드디어-상원이의-집을-추천합니다",
+    "title": "최종 추천 결과",
+    "section": "",
+    "text": "모든 조건을 적용하고, 데이터를 분석하고, 점수까지 매겨본 결과\n가장 적합한 단 하나의 집을 최종적으로 선정했습니다. 🎉"
+  },
+  {
+    "objectID": "final.html#조건-정리",
+    "href": "final.html#조건-정리",
+    "title": "최종 추천 결과",
+    "section": "🧠 조건 정리",
+    "text": "🧠 조건 정리\n\n\n\n조건 항목\n기준\n\n\n\n\n학교 거리\n2km 이내\n\n\n방 개수\n3개 이상\n\n\n욕실 개수\n2개 이상\n\n\n차고\n존재 (차고 수 1개 이상)\n\n\n층수\n2층 이상\n\n\n난방/냉방\nCentral Air 포함, HeatingQC 평균 이상\n\n\n주방\nKitchenAbvGr ≥ 1, KitchenQual 보통 이상\n\n\n도로 포장 여부\nPaved (Street == 'Pave')"
+  },
+  {
+    "objectID": "final.html#최종-필터링-및-정렬",
+    "href": "final.html#최종-필터링-및-정렬",
+    "title": "최종 추천 결과",
+    "section": "📊 최종 필터링 및 정렬",
+    "text": "📊 최종 필터링 및 정렬\n\n\nCode\nimport pandas as pd\n\ndf = pd.read_csv(\"../data/our_df.csv\")\n\n# 조건 필터링\nfinal_candidates = df[\n    (df['dist_to_ISU'] &lt;= 2000) &\n    (df['BedroomAbvGr'] &gt;= 3) &\n    (df['TotalFullBath'] &gt;= 2) &\n    (df['GarageCars'] &gt; 0) &\n    (df['HouseStyle'] == 2) &\n    (df['CentralAir'] == 'Y') &\n    (df['HeatingQC'].isin(['Ex', 'Gd', 'TA'])) &\n    (df['KitchenAbvGr'] &gt;= 1) &\n    (df['KitchenQual'].isin(['Ex', 'Gd', 'TA'])) &\n    (df['Street'] == 'Pave')\n]\n\n# 점수 기준 정렬\nfinal_recommendation = final_candidates.sort_values(\n    by=['OverallCond', 'GarageArea', 'TotalFullBath'],\n    ascending=False\n).head(1)\n\nfinal_recommendation\n\n\n\n\n\n\n\n\n\nUnnamed: 0\nBedroomAbvGr\nHeatingQC\nCentralAir\nHouseStyle\n2ndFlrSF\n1stFlrSF\nKitchenAbvGr\nKitchenQual\nGarageCars\nGarageArea\nOverallCond\nStreet\ndist_to_ISU\nLatitude\nLongitude\nTotalFullBath\nTotalHalfBath\n\n\n\n\n1638\n1701\n3\nEx\nY\n2\n560\n575\n1\nGd\n2.0\n576.0\n9\nPave\n853.184899\n42.019099\n-93.645091\n2.0\n0.0"
+  },
+  {
+    "objectID": "map.html",
+    "href": "map.html",
+    "title": "지도 기반 시각화",
+    "section": "",
+    "text": "조건을 만족하는 집은 많지만, 위치는 우리에게 정말 중요해요.\n아래 세 가지 기준을 중심으로 지도 시각화를 진행했습니다."
+  },
+  {
+    "objectID": "map.html#상원이의-집-위치부터-따져보자",
+    "href": "map.html#상원이의-집-위치부터-따져보자",
+    "title": "지도 기반 시각화",
+    "section": "",
+    "text": "조건을 만족하는 집은 많지만, 위치는 우리에게 정말 중요해요.\n아래 세 가지 기준을 중심으로 지도 시각화를 진행했습니다."
+  },
+  {
+    "objectID": "map.html#아이오와-주립대학교학교-반경-2km-이내-집-분포",
+    "href": "map.html#아이오와-주립대학교학교-반경-2km-이내-집-분포",
+    "title": "지도 기반 시각화",
+    "section": "🎓 1. 아이오와 주립대학교(학교) 반경 2km 이내 집 분포",
+    "text": "🎓 1. 아이오와 주립대학교(학교) 반경 2km 이내 집 분포\n학교에서 멀어질수록 등하교가 불편하고 교통비도 증가해요.\n우선 학교에서 반경 2km 이내에 있는 집들만 시각화해봤습니다.\n\n\nCode\nimport pandas as pd\nimport folium\nfrom folium.plugins import MarkerCluster\n\ndf = pd.read_csv(\"../data/our_df.csv\")\nisu_lat, isu_lon = 42.0267, -93.6465\n\nm = folium.Map(location=[isu_lat, isu_lon], zoom_start=14, tiles='CartoDB positron')\nfolium.Circle([isu_lat, isu_lon], radius=2000, color='blue', fill=True, fill_opacity=0.1, popup='ISU 2km').add_to(m)\nfolium.Marker([isu_lat, isu_lon], tooltip=\"Iowa State University\", icon=folium.Icon(color=\"blue\")).add_to(m)\n\ncluster = MarkerCluster().add_to(m)\nfor _, row in df.iterrows():\n    if row['dist_to_ISU'] &lt;= 2000:\n        popup = f\"{row['HouseStyle']}층 / 🛏 {row['BedroomAbvGr']} / 🛁 {row['TotalFullBath']}\"\n        folium.Marker([row['Latitude'], row['Longitude']],\n                      popup=popup,\n                      icon=folium.Icon(color='green')).add_to(cluster)\nm\n\n\nMake this Notebook Trusted to load map: File -&gt; Trust Notebook\n\n\n🏞️ 2. 공원 분포 (외부데이터 활용) 보경이는 러닝을 좋아해요! 🏃‍♀️ 따라서 근처에 공원이 있는지 확인도 필수예요. OSM(OpenStreetMap)에서 leisure=park 데이터를 활용해 Ames 내 공원 분포를 표시했습니다.\n\n\nCode\nimport osmnx as ox\n\nleisure_facility_tags = {\n    'park': {'leisure': 'park'},\n    'garden': {'leisure': 'garden'},\n    # 'playground': {'leisure': 'playground'},\n    # 'dog_park': {'leisure': 'dog_park'},\n    'sports_centre': {'leisure': 'sports_centre'},\n    'pitch': {'leisure': 'pitch'},\n    'track': {'leisure': 'track'},\n    # 'swimming_pool': {'leisure': 'swimming_pool'},\n    'stadium': {'leisure': 'stadium'},\n}\n\n# 👉 leisure 값만 뽑아서 리스트로 만든 후 하나로 합쳐줌\nleisure_tags = {'leisure': [tag['leisure'] for tag in leisure_facility_tags.values()]}\n\n# OSM 데이터 가져오기\nparks = ox.features_from_place(\"Ames, Iowa, USA\", tags=leisure_tags)\nprint(len(parks))\n\npark_map = folium.Map(location=[isu_lat, isu_lon], zoom_start=13, tiles='CartoDB positron')\nfor _, row in parks.iterrows():\n    if 'geometry' in row and row.geometry.geom_type == 'Point':\n        folium.CircleMarker(\n            location=[row.geometry.y, row.geometry.x],\n            radius=6,\n            color='green',\n            fill=True,\n            fill_color='green',\n            fill_opacity=0.6,\n            popup=row.get(\"name\", \"Unnamed Park\")\n        ).add_to(park_map)\n\npark_map\n\n\n986\n\n\nMake this Notebook Trusted to load map: File -&gt; Trust Notebook\n\n\n🌈 3. 조건 만족도에 따라 색상 구분 우리 팀은 조건을 수치화해서 각 집마다 만족도 점수를 계산했어요. 아래 지도는 각 집의 조건 만족도 점수(score)에 따라 색상이 달라지는 시각화예요.\n1.0에 가까울수록 조건을 완벽히 충족\n0.0에 가까울수록 조건을 거의 만족하지 못함\n\n\nCode\nimport numpy as np\n\n# 예시로 점수 생성 (실제는 사전 계산된 score 컬럼 사용)\ndf[\"score\"] = (\n    0.2 * (df[\"BedroomAbvGr\"] &gt;= 3).astype(int) +\n    0.2 * (df[\"TotalFullBath\"] &gt;= 2).astype(int) +\n    0.2 * (df[\"GarageCars\"] &gt; 0).astype(int) +\n    0.2 * (df[\"HouseStyle\"] == 2).astype(int) +\n    0.2 * (df[\"dist_to_ISU\"] &lt;= 2000).astype(int)\n)\n\ndef get_color(score):\n    if score &gt;= 0.8:\n        return \"darkgreen\"\n    elif score &gt;= 0.6:\n        return \"lightgreen\"\n    elif score &gt;= 0.4:\n        return \"orange\"\n    else:\n        return \"red\"\n\nscore_map = folium.Map(location=[isu_lat, isu_lon], zoom_start=13, tiles='CartoDB positron')\n\nfor _, row in df.iterrows():\n    color = get_color(row['score'])\n    folium.CircleMarker(\n        location=[row['Latitude'], row['Longitude']],\n        radius=5,\n        color=color,\n        fill=True,\n        fill_color=color,\n        fill_opacity=0.7,\n        popup=f\"Score: {row['score']:.1f}\"\n    ).add_to(score_map)\n\nscore_map\n\n\nMake this Notebook Trusted to load map: File -&gt; Trust Notebook"
+  }
+]

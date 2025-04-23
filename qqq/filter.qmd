@@ -1,0 +1,64 @@
+---
+title: "조건 필터링 대시보드"
+format:
+  html:
+    theme: cosmo
+    toc: true
+    toc-depth: 2
+    code-tools: true
+    code-fold: true
+---
+
+## 🔍 유학생의 현실 반영! 조건을 직접 조정해보자
+
+우리 팀은 모두 유학생이에요. 현실적인 조건을 무시할 수 없죠.  
+그래서 다양한 요소를 고려해 **필터 슬라이더로 집을 직접 골라볼 수 있도록** 만들었습니다.
+
+---
+
+## 📌 사용 방법
+
+슬라이더를 조정하면 조건에 맞는 집만 표시됩니다.  
+가장 적합한 집을 빠르게 찾는 데 큰 도움이 돼요.
+
+```{python}
+import pandas as pd
+
+df = pd.read_csv("../data/our_df.csv")
+
+# 기본 필터 조건 설정
+dist_limit = 2000
+min_bedroom = 3
+min_bath = 2.0
+garage_required = True
+
+# 조건 적용
+filtered = df[
+    (df['dist_to_ISU'] <= dist_limit) &
+    (df['BedroomAbvGr'] >= min_bedroom) &
+    (df['TotalFullBath'] >= min_bath)
+]
+
+if garage_required:
+    filtered = filtered[df['GarageCars'] > 0]
+
+filtered[['BedroomAbvGr', 'TotalFullBath', 'GarageCars', 'GarageArea', 'dist_to_ISU']].sort_values(by='dist_to_ISU').head(10)
+```
+
+🎯 조건 기준 예시 설명
+📍 dist_to_ISU <= 2000: 학교 반경 2km 이내
+
+🛏️ BedroomAbvGr >= 3: 3인 이상 함께 살 수 있는 방 개수
+
+🛁 TotalFullBath >= 2: 성별 구분을 위한 최소 욕실 2개
+
+🚗 GarageCars > 0: 차가 있으므로 차고 필수!
+
+✅ 필터링 결과 예시
+조건을 충족한 집 10개를 예시로 출력합니다.
+
+
+방 개수	욕실 수	차고 대수	차고 면적	학교 거리 (m)
+...	...	...	...	...
+💡 이 필터 기능을 사용하면 여러 후보 중 가장 조건에 맞는 집을 빠르게 탐색할 수 있어요!
+

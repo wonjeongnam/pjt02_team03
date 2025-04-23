@@ -1,0 +1,61 @@
+---
+title: "최종 추천 결과"
+format:
+  html:
+    theme: cosmo
+    toc: true
+    toc-depth: 2
+    code-fold: true
+---
+
+## 🏁 드디어, 상원이의 집을 추천합니다!
+
+모든 조건을 적용하고, 데이터를 분석하고, 점수까지 매겨본 결과  
+**가장 적합한 단 하나의 집**을 최종적으로 선정했습니다. 🎉
+
+---
+
+## 🧠 조건 정리
+
+| 조건 항목        | 기준                                       |
+|------------------|--------------------------------------------|
+| 학교 거리       | 2km 이내                                   |
+| 방 개수         | 3개 이상                                    |
+| 욕실 개수       | 2개 이상                                    |
+| 차고            | 존재 (차고 수 1개 이상)                     |
+| 층수            | 2층 이상                                    |
+| 난방/냉방       | Central Air 포함, HeatingQC 평균 이상       |
+| 주방            | KitchenAbvGr ≥ 1, KitchenQual 보통 이상     |
+| 도로 포장 여부   | Paved (`Street == 'Pave'`)                  |
+
+---
+
+## 📊 최종 필터링 및 정렬
+
+```{python}
+import pandas as pd
+
+df = pd.read_csv("../data/our_df.csv")
+
+# 조건 필터링
+final_candidates = df[
+    (df['dist_to_ISU'] <= 2000) &
+    (df['BedroomAbvGr'] >= 3) &
+    (df['TotalFullBath'] >= 2) &
+    (df['GarageCars'] > 0) &
+    (df['HouseStyle'] == 2) &
+    (df['CentralAir'] == 'Y') &
+    (df['HeatingQC'].isin(['Ex', 'Gd', 'TA'])) &
+    (df['KitchenAbvGr'] >= 1) &
+    (df['KitchenQual'].isin(['Ex', 'Gd', 'TA'])) &
+    (df['Street'] == 'Pave')
+]
+
+# 점수 기준 정렬
+final_recommendation = final_candidates.sort_values(
+    by=['OverallCond', 'GarageArea', 'TotalFullBath'],
+    ascending=False
+).head(1)
+
+final_recommendation
+```

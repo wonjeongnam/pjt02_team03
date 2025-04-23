@@ -1,0 +1,84 @@
+---
+title: "상원이의 집을 찾아서"
+format:
+  html:
+    theme: cosmo
+    toc: true
+    toc-depth: 2
+    code-fold: true
+---
+
+## 📖 프로젝트 소개
+
+4명의 아이오와 유학생이 조건에 맞는 **상원이의 집**을 찾기 위해 데이터를 분석했습니다.
+
+### 🎯 우리의 조건
+
+- 🎓 학교 근처여야 함  
+- 💰 월세는 저렴할수록 좋음  
+- 🛏️ 방/욕실 수는 넉넉해야 함  
+- 🔥 난방/에어컨, 전기 시스템도 확인  
+- 🚗 차고, 🏞️ 공원, 🧱 울타리, 도로 포장 여부도 고려  
+
+---
+
+## 📊 주요 변수 분포
+
+```{python}
+import pandas as pd
+import plotly.express as px
+our_df = pd.read_csv("../data/our_df2.csv")
+```
+
+# 2열 구조로 시각화
+```{python}
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# 제외하고 싶은 컬럼 리스트
+exclude_cols = ['Longitude', 'Latitude', 'dist_to_ISU', 'GarageArea', 'Unnamed: 0', 'SalePrice']
+
+# 히스토그램 대상 컬럼
+hist_cols = ['1stFlrSF', '2ndFlrSF', 'GarageArea']  # 존재하는 걸로 수정해야 해
+
+# 막대그래프 대상 컬럼: hist_cols + 제외 컬럼 빼고 나머지
+barplot_cols = [col for col in our_df.columns if col not in hist_cols + exclude_cols]
+# 1️⃣ 히스토그램 (2열 서브플롯)
+n = len(hist_cols)
+rows = (n + 1) // 2
+fig, axes = plt.subplots(rows, 2, figsize=(10, rows * 3), dpi=80)
+axes = axes.flatten()
+
+for i, col in enumerate(hist_cols):
+    sns.histplot(our_df[col], kde=True, bins=30, color='skyblue', ax=axes[i])
+    axes[i].set_title(f'Distribution of {col}', fontsize=10)
+    axes[i].set_xlabel(col, fontsize=9)
+    axes[i].set_ylabel('Frequency', fontsize=9)
+
+for j in range(i + 1, len(axes)):
+    fig.delaxes(axes[j])
+
+plt.tight_layout()
+plt.show()
+
+# 2️⃣ 막대그래프 (2열 서브플롯)
+n = len(barplot_cols)
+rows = (n + 1) // 2
+fig, axes = plt.subplots(rows, 2, figsize=(11, rows * 3.2), dpi=70)
+axes = axes.flatten()
+
+for i, col in enumerate(barplot_cols):
+    sns.countplot(data=our_df, x=col, hue=col, palette='Set2', ax=axes[i], legend=False)
+    axes[i].set_title(f'Countplot of {col}', fontsize=10)
+    axes[i].set_xlabel(col, fontsize=9)
+    axes[i].set_ylabel('Count', fontsize=9)
+    axes[i].tick_params(axis='x', rotation=45, labelsize=8)
+
+for j in range(i + 1, len(axes)):
+    fig.delaxes(axes[j])
+
+plt.tight_layout()
+plt.show()
+
+
+```
