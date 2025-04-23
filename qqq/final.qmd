@@ -35,7 +35,7 @@ format:
 ```{python}
 import pandas as pd
 
-df = pd.read_csv("../data/our_df.csv")
+df = pd.read_csv("../data/our_df2.csv")
 
 # 조건 필터링
 final_candidates = df[

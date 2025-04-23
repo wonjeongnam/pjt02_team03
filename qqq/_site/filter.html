@@ -200,7 +200,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="사용-방법">📌 사용 방법</h2>
 <p>슬라이더를 조정하면 조건에 맞는 집만 표시됩니다.<br>
 가장 적합한 집을 빠르게 찾는 데 큰 도움이 돼요.</p>
-<div id="dd43ff06" class="cell" data-execution_count="1">
+<div id="6e2709c7" class="cell" data-execution_count="1">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
@@ -226,12 +226,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>filtered[[<span class="st">'BedroomAbvGr'</span>, <span class="st">'TotalFullBath'</span>, <span class="st">'GarageCars'</span>, <span class="st">'GarageArea'</span>, <span class="st">'dist_to_ISU'</span>]].sort_values(by<span class="op">=</span><span class="st">'dist_to_ISU'</span>).head(<span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stderr">
-<pre><code>C:\Users\user\AppData\Local\Temp\ipykernel_17780\1529705203.py:19: UserWarning:
+<pre><code>C:\Users\user\AppData\Local\Temp\ipykernel_6864\1529705203.py:19: UserWarning:
 
 Boolean Series key will be reindexed to match DataFrame index.
 </code></pre>
 </div>
-<div class="cell-output cell-output-display" data-execution_count="1">
+<div class="cell-output cell-output-display" data-execution_count="3">
 <div>
 
 
@@ -838,45 +838,49 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>가장 적합한 집을 빠르게 찾는 데 큰 도움이 돼요.</span>
 <span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
-<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.read_csv(<span class="st">"../data/our_df.csv"</span>)</span>
-<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a><span class="co"># 기본 필터 조건 설정</span></span>
-<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>dist_limit <span class="op">=</span> <span class="dv">2000</span></span>
-<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>min_bedroom <span class="op">=</span> <span class="dv">3</span></span>
-<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>min_bath <span class="op">=</span> <span class="fl">2.0</span></span>
-<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>garage_required <span class="op">=</span> <span class="va">True</span></span>
-<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a><span class="co"># 조건 적용</span></span>
-<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>filtered <span class="op">=</span> df[</span>
-<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>    (df[<span class="st">'dist_to_ISU'</span>] <span class="op">&lt;=</span> dist_limit) <span class="op">&amp;</span></span>
-<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>    (df[<span class="st">'BedroomAbvGr'</span>] <span class="op">&gt;=</span> min_bedroom) <span class="op">&amp;</span></span>
-<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>    (df[<span class="st">'TotalFullBath'</span>] <span class="op">&gt;=</span> min_bath)</span>
-<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>]</span>
-<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> garage_required:</span>
-<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a>    filtered <span class="op">=</span> filtered[df[<span class="st">'GarageCars'</span>] <span class="op">&gt;</span> <span class="dv">0</span>]</span>
-<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a>filtered[[<span class="st">'BedroomAbvGr'</span>, <span class="st">'TotalFullBath'</span>, <span class="st">'GarageCars'</span>, <span class="st">'GarageArea'</span>, <span class="st">'dist_to_ISU'</span>]].sort_values(by<span class="op">=</span><span class="st">'dist_to_ISU'</span>).head(<span class="dv">10</span>)</span>
-<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a>🎯 조건 기준 예시 설명</span>
-<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a>📍 dist_to_ISU &lt;= 2000: 학교 반경 2km 이내</span>
-<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a>🛏️ BedroomAbvGr &gt;= 3: 3인 이상 함께 살 수 있는 방 개수</span>
-<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a>🛁 TotalFullBath &gt;= 2: 성별 구분을 위한 최소 욕실 2개</span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> streamlit <span class="im">as</span> st</span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.read_csv(<span class="st">"../data/our_df2.csv"</span>)</span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>st.title(<span class="st">"🏠 조건 필터링으로 집 찾기"</span>)</span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>st.markdown(<span class="st">"📌 **슬라이더를 조정하면 조건에 맞는 집만 표시됩니다.**"</span>)</span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a><span class="co"># 슬라이더 UI</span></span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>dist_limit <span class="op">=</span> st.slider(<span class="st">"🏫 학교와의 거리 제한 (m)"</span>, <span class="dv">0</span>, <span class="dv">5000</span>, <span class="dv">2000</span>, step<span class="op">=</span><span class="dv">100</span>)</span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>min_bedroom <span class="op">=</span> st.slider(<span class="st">"🛏️ 최소 방 개수"</span>, <span class="dv">1</span>, <span class="dv">6</span>, <span class="dv">3</span>)</span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>min_bath <span class="op">=</span> st.slider(<span class="st">"🛁 최소 욕실 수"</span>, <span class="fl">1.0</span>, <span class="fl">4.0</span>, <span class="fl">2.0</span>, step<span class="op">=</span><span class="fl">0.5</span>)</span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>garage_required <span class="op">=</span> st.checkbox(<span class="st">"🚗 차고 필요"</span>, value<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a><span class="co"># 필터 적용</span></span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>filtered <span class="op">=</span> df[</span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>    (df[<span class="st">'dist_to_ISU'</span>] <span class="op">&lt;=</span> dist_limit) <span class="op">&amp;</span></span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a>    (df[<span class="st">'BedroomAbvGr'</span>] <span class="op">&gt;=</span> min_bedroom) <span class="op">&amp;</span></span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a>    (df[<span class="st">'TotalFullBath'</span>] <span class="op">&gt;=</span> min_bath)</span>
+<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> garage_required:</span>
+<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a>    filtered <span class="op">=</span> filtered[df[<span class="st">'GarageCars'</span>] <span class="op">&gt;</span> <span class="dv">0</span>]</span>
+<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a>st.dataframe(filtered.sort_values(by<span class="op">=</span><span class="st">'dist_to_ISU'</span>).head(<span class="dv">10</span>))</span>
+<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a>🎯 조건 기준 예시 설명</span>
+<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a>📍 dist_to_ISU &lt;= 2000: 학교 반경 2km 이내</span>
 <span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a>🚗 GarageCars &gt; 0: 차가 있으므로 차고 필수!</span>
+<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a>🛏️ BedroomAbvGr &gt;= 3: 3인 이상 함께 살 수 있는 방 개수</span>
 <span id="cb3-58"><a href="#cb3-58" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-59"><a href="#cb3-59" aria-hidden="true" tabindex="-1"></a>✅ 필터링 결과 예시</span>
-<span id="cb3-60"><a href="#cb3-60" aria-hidden="true" tabindex="-1"></a>조건을 충족한 집 10개를 예시로 출력합니다.</span>
-<span id="cb3-61"><a href="#cb3-61" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-59"><a href="#cb3-59" aria-hidden="true" tabindex="-1"></a>🛁 TotalFullBath &gt;= 2: 성별 구분을 위한 최소 욕실 2개</span>
+<span id="cb3-60"><a href="#cb3-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-61"><a href="#cb3-61" aria-hidden="true" tabindex="-1"></a>🚗 GarageCars &gt; 0: 차가 있으므로 차고 필수!</span>
 <span id="cb3-62"><a href="#cb3-62" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-63"><a href="#cb3-63" aria-hidden="true" tabindex="-1"></a>방 개수    욕실 수    차고 대수   차고 면적   학교 거리 (m)</span>
-<span id="cb3-64"><a href="#cb3-64" aria-hidden="true" tabindex="-1"></a>... ... ... ... ...</span>
-<span id="cb3-65"><a href="#cb3-65" aria-hidden="true" tabindex="-1"></a>💡 이 필터 기능을 사용하면 여러 후보 중 가장 조건에 맞는 집을 빠르게 탐색할 수 있어요!</span>
+<span id="cb3-63"><a href="#cb3-63" aria-hidden="true" tabindex="-1"></a>✅ 필터링 결과 예시</span>
+<span id="cb3-64"><a href="#cb3-64" aria-hidden="true" tabindex="-1"></a>조건을 충족한 집 10개를 예시로 출력합니다.</span>
+<span id="cb3-65"><a href="#cb3-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-66"><a href="#cb3-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-67"><a href="#cb3-67" aria-hidden="true" tabindex="-1"></a>방 개수    욕실 수    차고 대수   차고 면적   학교 거리 (m)</span>
+<span id="cb3-68"><a href="#cb3-68" aria-hidden="true" tabindex="-1"></a>... ... ... ... ...</span>
+<span id="cb3-69"><a href="#cb3-69" aria-hidden="true" tabindex="-1"></a>💡 이 필터 기능을 사용하면 여러 후보 중 가장 조건에 맞는 집을 빠르게 탐색할 수 있어요!</span>
 </code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

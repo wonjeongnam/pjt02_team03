@@ -22,27 +22,31 @@ format:
 가장 적합한 집을 빠르게 찾는 데 큰 도움이 돼요.
 
 ```{python}
+import streamlit as st
 import pandas as pd
 
-df = pd.read_csv("../data/our_df.csv")
+df = pd.read_csv("../data/our_df2.csv")
 
-# 기본 필터 조건 설정
-dist_limit = 2000
-min_bedroom = 3
-min_bath = 2.0
-garage_required = True
+st.title("🏠 조건 필터링으로 집 찾기")
 
-# 조건 적용
+st.markdown("📌 **슬라이더를 조정하면 조건에 맞는 집만 표시됩니다.**")
+
+# 슬라이더 UI
+dist_limit = st.slider("🏫 학교와의 거리 제한 (m)", 0, 5000, 2000, step=100)
+min_bedroom = st.slider("🛏️ 최소 방 개수", 1, 6, 3)
+min_bath = st.slider("🛁 최소 욕실 수", 1.0, 4.0, 2.0, step=0.5)
+garage_required = st.checkbox("🚗 차고 필요", value=True)
+
+# 필터 적용
 filtered = df[
     (df['dist_to_ISU'] <= dist_limit) &
     (df['BedroomAbvGr'] >= min_bedroom) &
     (df['TotalFullBath'] >= min_bath)
 ]
-
 if garage_required:
     filtered = filtered[df['GarageCars'] > 0]
 
-filtered[['BedroomAbvGr', 'TotalFullBath', 'GarageCars', 'GarageArea', 'dist_to_ISU']].sort_values(by='dist_to_ISU').head(10)
+st.dataframe(filtered.sort_values(by='dist_to_ISU').head(10))
 ```
 
 🎯 조건 기준 예시 설명
