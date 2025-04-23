@@ -1,0 +1,108 @@
+
+---
+title: "상원이의 집을 찾아서"
+format: 
+  html:
+    theme: cosmo
+    page-layout: full
+    dashboard: 
+      orientation: rows
+      sidebar:
+        style: floating
+        background: light
+      body-width: full
+      margin: 0
+      padding: 1em
+execute:
+  echo: true
+---
+
+```{python}
+import pandas as pd
+df = pd.read_csv("../data/our_df.csv")
+```
+
+::: {.column width="400px"}
+## 🎓 학교와의 거리 분포
+```{python}
+import plotly.express as px
+px.histogram(df, x="dist_to_ISU", title="학교 거리 분포").show()
+```
+
+## 🛏️ 방 개수
+```{python}
+px.histogram(df, x="BedroomAbvGr", title="방 개수 분포").show()
+```
+
+## 🛁 욕실 개수
+```{python}
+px.histogram(df, x="TotalFullBath", title="욕실 수 분포").show()
+```
+
+## 🚗 차고 수
+```{python}
+px.histogram(df, x="GarageCars", title="차고 수 분포").show()
+```
+:::
+
+::: {.column width="600px"}
+## 🗺️ 지도 시각화
+
+```{python}
+import folium
+from folium.plugins import MarkerCluster
+
+isu_lat, isu_lon = 42.0267, -93.6465
+m = folium.Map(location=[isu_lat, isu_lon], zoom_start=14, tiles='CartoDB positron')
+folium.Circle([isu_lat, isu_lon], radius=2000, color='blue', fill=True, fill_opacity=0.05).add_to(m)
+folium.Marker([isu_lat, isu_lon], tooltip="ISU", icon=folium.Icon(color="blue")).add_to(m)
+
+cluster = MarkerCluster().add_to(m)
+for _, row in df.iterrows():
+    if row['dist_to_ISU'] <= 2000:
+        popup = f"{row['HouseStyle']}층 / 🛏 {row['BedroomAbvGr']} / 🛁 {row['TotalFullBath']}"
+        folium.Marker([row['Latitude'], row['Longitude']],
+                      popup=popup,
+                      icon=folium.Icon(color='red')).add_to(cluster)
+m
+```
+
+:::
+
+## 📈 Lasso 회귀 분석
+
+```{python}
+from sklearn.linear_model import LassoCV
+from sklearn.preprocessing import StandardScaler
+from sklearn.pipeline import Pipeline
+import plotly.graph_objects as go
+
+X = df[['BedroomAbvGr', 'TotalFullBath', 'GarageCars', 'GarageArea', '2ndFlrSF', '1stFlrSF', 'dist_to_ISU']]
+y = df['OverallCond']
+
+pipeline = Pipeline([
+    ("scaler", StandardScaler()),
+    ("lasso", LassoCV(cv=5))
+])
+pipeline.fit(X, y)
+
+coef = pipeline.named_steps['lasso'].coef_
+feature_importance = pd.Series(coef, index=X.columns).sort_values()
+
+fig = go.Figure([go.Bar(x=feature_importance.values, y=feature_importance.index, orientation='h')])
+fig.update_layout(title="Lasso Feature Importance", xaxis_title="계수 값", yaxis_title="변수")
+fig.show()
+```
+
+## 🏅 최종 추천
+
+```{python}
+final = df[
+    (df['dist_to_ISU'] <= 2000) &
+    (df['BedroomAbvGr'] >= 3) &
+    (df['TotalFullBath'] >= 2) &
+    (df['GarageCars'] > 0)
+].sort_values(by=['OverallCond', 'GarageArea'], ascending=False).head(1)
+
+final
+```
